@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday, Dev 🌙</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Caveat:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0b0f2b;
+    --bg-mid:#151a3d;
+    --bg-soft:#1d2350;
+    --gold:#f3c98b;
+    --gold-soft:#f3c98b99;
+    --rose:#eda9c4;
+    --cream:#f7efe1;
+    --muted:#9aa2ca;
+    --line: rgba(243,201,139,0.22);
+    --shadow: 0 20px 60px rgba(0,0,0,0.45);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-deep);
+    color:var(--cream);
+    font-family:'Poppins',sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .script{font-family:'Caveat',cursive;}
+
+  /* ---------- Heart accent after name mentions ---------- */
+  .mini-heart{
+    display:inline-block; margin-left:3px; animation: heartbeat 1.8s ease-in-out infinite;
+    transform-origin:center;
+  }
+  @keyframes heartbeat{
+    0%,100%{ transform:scale(1); }
+    15%{ transform:scale(1.25); }
+    30%{ transform:scale(1); }
+    45%{ transform:scale(1.15); }
+    60%{ transform:scale(1); }
+  }
+
+  /* ---------- Starfield background (shared) ---------- */
+  .stars-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(1px 1px at 20% 30%, #fff 100%, transparent),
+      radial-gradient(1px 1px at 60% 70%, #fff 100%, transparent),
+      radial-gradient(2px 2px at 80% 20%, #fff 100%, transparent),
+      radial-gradient(1px 1px at 40% 85%, #fff 100%, transparent),
+      radial-gradient(1px 1px at 90% 60%, #fff 100%, transparent),
+      radial-gradient(2px 2px at 10% 65%, #fff 100%, transparent),
+      radial-gradient(1px 1px at 50% 10%, #fff 100%, transparent),
+      radial-gradient(1px 1px at 75% 45%, #fff 100%, transparent);
+    background-size: 400px 400px;
+    opacity:.55;
+    animation: twinkle 6s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle{ from{opacity:.35;} to{opacity:.75;} }
+
+  /* ================= LOCK SCREEN ================= */
+  #lock{
+    position:fixed; inset:0; z-index:50;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:radial-gradient(ellipse at 50% 30%, var(--bg-soft), var(--bg-deep) 70%);
+    text-align:center; padding:24px;
+    transition:opacity 1s ease, visibility 1s ease;
+  }
+  #lock.hidden{opacity:0; visibility:hidden; pointer-events:none;}
+  .moon{
+    width:90px; height:90px; border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #fff9ec, var(--gold) 60%, #d9a95f 100%);
+    box-shadow:0 0 60px 10px rgba(243,201,139,0.35);
+    margin-bottom:28px;
+  }
+  #lock p.eyebrow{
+    letter-spacing:.25em; text-transform:uppercase; font-size:.7rem;
+    color:var(--muted); margin-bottom:10px;
+  }
+  #lock h1{ font-size:clamp(1.6rem, 5vw, 2.6rem); margin-bottom:14px; }
+  #lock .sub{ color:var(--muted); max-width:420px; margin-bottom:34px; font-size:.95rem; line-height:1.6;}
+  #countdown{
+    display:flex; gap:18px; margin-bottom:36px; flex-wrap:wrap; justify-content:center;
+  }
+  .cbox{ min-width:70px; }
+  .cbox .num{
+    font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold);
+    background:rgba(255,255,255,0.04); border:1px solid var(--line);
+    border-radius:14px; padding:14px 10px; display:block;
+  }
+  .cbox .lab{ font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-top:8px; display:block;}
+  #openBtn{
+    font-family:'Playfair Display',serif; font-size:1rem; letter-spacing:.05em;
+    background:transparent; color:var(--gold); border:1px solid var(--gold-soft);
+    padding:14px 34px; border-radius:40px; cursor:pointer; transition:.35s;
+  }
+  #openBtn:hover{ background:var(--gold); color:var(--bg-deep); box-shadow:0 0 30px rgba(243,201,139,0.5); }
+  #openBtn:focus-visible, button:focus-visible, .star-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+  /* ================= MAIN CONTENT ================= */
+  #main{ position:relative; z-index:1; opacity:0; }
+  #main.reveal{ animation: fadeUp 1.2s ease forwards; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(24px);} to{opacity:1; transform:translateY(0);} }
+
+  section{ position:relative; z-index:2; padding:100px 24px; max-width:980px; margin:0 auto; }
+
+  /* --- Hero --- */
+  #hero{ min-height:92vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  #hero .eyebrow{ letter-spacing:.3em; text-transform:uppercase; font-size:.72rem; color:var(--gold); margin-bottom:18px; }
+  #hero h1{ font-size:clamp(2.4rem, 7vw, 4.6rem); line-height:1.05; }
+  #hero h1 .name{ font-family:'Caveat',cursive; font-size:1.25em; color:var(--rose); display:inline-block; }
+  #hero .tagline{ margin-top:22px; color:var(--muted); max-width:480px; font-size:1.02rem; line-height:1.7; }
+  .scroll-cue{ margin-top:56px; color:var(--muted); font-size:.75rem; letter-spacing:.2em; text-transform:uppercase; animation:bob 2.4s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
+
+  /* --- Section headers --- */
+  .head{ text-align:center; margin-bottom:56px; }
+  .head .eyebrow{ letter-spacing:.3em; text-transform:uppercase; font-size:.7rem; color:var(--gold); margin-bottom:12px; }
+  .head h2{ font-size:clamp(1.7rem, 4vw, 2.4rem); }
+  .head p{ color:var(--muted); margin-top:12px; max-width:520px; margin-left:auto; margin-right:auto; }
+
+  /* --- Our Story timeline --- */
+  .story-line{
+    position:relative; max-width:640px; margin:0 auto; padding-left:34px;
+  }
+  .story-line::before{
+    content:''; position:absolute; left:9px; top:6px; bottom:6px; width:1px;
+    background:repeating-linear-gradient(to bottom, var(--gold-soft) 0 6px, transparent 6px 12px);
+  }
+  .chapter{
+    position:relative; margin-bottom:44px;
+    opacity:0; transform:translateY(18px); transition:opacity .8s ease, transform .8s ease;
+  }
+  .chapter.in{ opacity:1; transform:translateY(0); }
+  .chapter:last-child{ margin-bottom:0; }
+  .chapter::before{
+    content:attr(data-n); position:absolute; left:-34px; top:2px; width:20px; height:20px;
+    border-radius:50%; background:var(--bg-deep); border:1px solid var(--gold-soft);
+    color:var(--gold); font-size:.65rem; font-family:'Poppins',sans-serif;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .chapter .ch-eyebrow{ font-size:.68rem; letter-spacing:.15em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+  .chapter h3{ font-size:1.25rem; margin-bottom:10px; }
+  .chapter p{ color:var(--muted); line-height:1.75; font-size:.95rem; }
+  .chapter .quote{ font-family:'Caveat',cursive; color:var(--rose); font-size:1.3rem; display:block; margin-top:10px; }
+
+  .count-row{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; }
+
+  /* --- Star drift parallax --- */
+  .drift{ transform-box: fill-box; transform-origin: center; }
+  .drift-a{ animation: driftA 9s ease-in-out infinite; }
+  .drift-b{ animation: driftB 12s ease-in-out infinite; }
+  .drift-c{ animation: driftC 7.5s ease-in-out infinite; }
+  @keyframes driftA{
+    0%,100%{ transform:translate(0,0); }
+    25%{ transform:translate(6px,-8px); }
+    50%{ transform:translate(-4px,4px); }
+    75%{ transform:translate(4px,6px); }
+  }
+  @keyframes driftB{
+    0%,100%{ transform:translate(0,0); }
+    30%{ transform:translate(-8px,6px); }
+    60%{ transform:translate(7px,-5px); }
+    80%{ transform:translate(-3px,-7px); }
+  }
+  @keyframes driftC{
+    0%,100%{ transform:translate(0,0); }
+    20%{ transform:translate(5px,7px); }
+    55%{ transform:translate(-7px,-4px); }
+    85%{ transform:translate(6px,-6px); }
+  }
+
+  /* --- Constellation --- */
+  #constellation{ }
+  .const-wrap{ position:relative; width:100%; max-width:720px; margin:0 auto; aspect-ratio: 16/11; }
+  .const-wrap svg{ width:100%; height:100%; overflow:visible; }
+  .const-line{ stroke:var(--gold-soft); stroke-width:1.5; stroke-dasharray:4 6; fill:none; }
+  .star-btn{
+    background:none; border:none; cursor:pointer; padding:0;
+    filter:drop-shadow(0 0 8px rgba(243,201,139,.6));
+    transition: transform .3s ease;
+  }
+  .star-btn:hover{ transform:scale(1.25); }
+  .star-label{
+    font-family:'Caveat',cursive; font-size:1.05rem; fill:var(--cream);
+  }
+  .star-date{ font-family:'Poppins',sans-serif; font-size:.6rem; fill:var(--muted); letter-spacing:.05em;}
+
+  /* --- Memory modal --- */
+  #memModal{
+    position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+    background:rgba(6,8,24,0.78); backdrop-filter:blur(6px);
+    opacity:0; visibility:hidden; transition:.4s ease; padding:20px;
+  }
+  #memModal.open{ opacity:1; visibility:visible; }
+  .mem-card{
+    background:linear-gradient(160deg, var(--bg-soft), var(--bg-mid));
+    border:1px solid var(--line); border-radius:20px; max-width:520px; width:100%;
+    padding:28px; box-shadow:var(--shadow); position:relative; text-align:left;
+    transform:translateY(18px) scale(.97); transition:.4s ease;
+  }
+  #memModal.open .mem-card{ transform:translateY(0) scale(1); }
+  .mem-card .close{ position:absolute; top:14px; right:16px; background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer; }
+  .photo-frame{
+    position:relative; width:100%; aspect-ratio:4/3; border-radius:14px; overflow:hidden;
+    background:var(--bg-deep); margin-bottom:18px; border:1px solid var(--line);
+  }
+  .photo-frame .illo{ position:absolute; inset:0; }
+  .photo-frame img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .mem-card .date-chip{ font-size:.7rem; letter-spacing:.15em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; display:block; }
+  .mem-card h3{ font-size:1.35rem; margin-bottom:10px; }
+  .mem-card p{ color:var(--muted); line-height:1.7; font-size:.92rem; }
+
+  /* --- Letter --- */
+  #letter{ text-align:center; }
+  .letter-card{
+    background:linear-gradient(160deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+    border:1px solid var(--line); border-radius:22px; padding:clamp(28px,6vw,56px);
+    text-align:left; max-width:640px; margin:0 auto; position:relative;
+  }
+  .letter-card::before{ content:'✦'; position:absolute; top:22px; right:26px; color:var(--gold); opacity:.5; }
+  #letterText{
+    font-family:'Caveat',cursive; font-size:1.5rem; line-height:1.75; color:var(--cream);
+    white-space:pre-wrap;
+  }
+  .caret{ display:inline-block; width:2px; background:var(--gold); animation:blink 1s step-end infinite; }
+  @keyframes blink{ 50%{opacity:0;} }
+  .signature{ font-family:'Caveat',cursive; font-size:1.7rem; color:var(--rose); margin-top:18px; display:block; }
+
+  /* --- Gallery --- */
+  .gallery{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:22px; }
+  .polaroid{
+    background:#f7efe1; padding:12px 12px 32px; border-radius:6px; transform:rotate(var(--r,0deg));
+    box-shadow:var(--shadow); position:relative; transition:transform .3s ease;
+  }
+  .polaroid:hover{ transform:rotate(0deg) scale(1.04); z-index:5; }
+  .polaroid .frame{ width:100%; aspect-ratio:1/1; background:var(--bg-mid); border-radius:2px; overflow:hidden; position:relative; cursor:pointer; }
+  .polaroid .frame::after{
+    content:'✦ tap to view'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(11,15,43,0.55); color:var(--gold); font-family:'Poppins',sans-serif; font-size:.7rem;
+    letter-spacing:.1em; text-transform:uppercase; opacity:0; transition:opacity .3s ease;
+  }
+  .polaroid .frame:hover::after{ opacity:1; }
+  .polaroid .frame img{ width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+  .polaroid .frame .illo{ position:absolute; inset:0; }
+  .polaroid .cap{ font-family:'Caveat',cursive; color:#3a2f22; text-align:center; margin-top:10px; font-size:1.1rem; }
+
+  /* --- Wish / finale --- */
+  #finale{ text-align:center; }
+  #finale h2{ font-size:clamp(1.8rem,5vw,2.8rem); margin-bottom:18px; }
+  #finale p{ color:var(--muted); max-width:460px; margin:0 auto 34px; line-height:1.7; }
+  #wishBtn{
+    width:110px; height:110px; border-radius:50%; border:1px solid var(--gold-soft);
+    background:radial-gradient(circle at 35% 30%, rgba(243,201,139,.35), transparent 70%);
+    color:var(--gold); font-family:'Playfair Display',serif; font-size:.95rem; cursor:pointer;
+    transition:.4s ease;
+  }
+  #wishBtn:hover{ box-shadow:0 0 40px rgba(243,201,139,.5); transform:scale(1.05); }
+  #finaleMsg{
+    margin-top:30px; font-family:'Caveat',cursive; font-size:1.8rem; color:var(--rose);
+    opacity:0; transition:opacity 1s ease;
+  }
+  #finaleMsg.show{ opacity:1; }
+
+  /* --- Photo lightbox --- */
+  #photoModal{
+    position:fixed; inset:0; z-index:65; display:flex; align-items:center; justify-content:center;
+    background:rgba(6,8,24,0.85); backdrop-filter:blur(6px);
+    opacity:0; visibility:hidden; transition:.4s ease; padding:24px;
+  }
+  #photoModal.open{ opacity:1; visibility:visible; }
+  .photo-modal-inner{
+    position:relative; max-width:640px; width:100%; max-height:82vh;
+    border-radius:16px; overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow);
+    background:var(--bg-mid); transform:scale(.96); transition:.4s ease;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #photoModal.open .photo-modal-inner{ transform:scale(1); }
+  .photo-modal-inner img{ width:100%; max-height:82vh; object-fit:contain; display:block; }
+  .photo-modal-inner .illo-big{ width:100%; aspect-ratio:4/3; }
+  #photoModal .close{
+    position:absolute; top:12px; right:14px; background:rgba(11,15,43,0.7); border:1px solid var(--line);
+    color:var(--cream); width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1rem; z-index:2;
+  }
+
+  /* --- Message form --- */
+  #message{ text-align:center; }
+  .feel-form{
+    max-width:520px; margin:0 auto; display:flex; flex-direction:column; gap:16px;
+    background:linear-gradient(160deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+    border:1px solid var(--line); border-radius:20px; padding:clamp(24px,5vw,40px);
+  }
+  .feel-form textarea{
+    width:100%; min-height:130px; resize:vertical; background:rgba(255,255,255,0.04);
+    border:1px solid var(--line); border-radius:12px; padding:16px; color:var(--cream);
+    font-family:'Poppins',sans-serif; font-size:.95rem; line-height:1.6;
+  }
+  .feel-form textarea::placeholder{ color:var(--muted); }
+  .feel-form textarea:focus{ outline:none; border-color:var(--gold-soft); }
+  .feel-form button{
+    font-family:'Playfair Display',serif; font-size:1rem; letter-spacing:.05em;
+    background:transparent; color:var(--gold); border:1px solid var(--gold-soft);
+    padding:14px 34px; border-radius:40px; cursor:pointer; transition:.35s; align-self:center;
+  }
+  .feel-form button:hover:not(:disabled){ background:var(--gold); color:var(--bg-deep); box-shadow:0 0 30px rgba(243,201,139,0.5); }
+  .feel-form button:disabled{ opacity:.5; cursor:default; }
+  #feelStatus{ font-size:.85rem; color:var(--muted); min-height:1.2em; }
+  #feelStatus.ok{ color:var(--rose); }
+
+  footer{ text-align:center; padding:50px 24px 70px; color:var(--muted); font-size:.75rem; letter-spacing:.1em; position:relative; z-index:2; }
+
+  canvas#burst{ position:fixed; inset:0; z-index:70; pointer-events:none; }
+
+  @media (max-width:560px){
+    section{ padding:70px 18px; }
+    #countdown{ gap:10px; }
+    .cbox{ min-width:58px; }
+    .cbox .num{ font-size:1.4rem; padding:10px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars-bg"></div>
+
+<!-- ============ LOCK SCREEN ============ -->
+<div id="lock">
+  <div class="moon"></div>
+  <p class="eyebrow">a little something is waking up</p>
+  <h1>For <span class="script" style="color:var(--rose)">Dev</span><span class="mini-heart">🤍</span></h1>
+  <p class="sub">Something's counting down to your birthday. Come back when the stars say it's time — or peek early if you can't wait.</p>
+  <div id="countdown">
+    <div class="cbox"><span class="num" id="cd-d">00</span><span class="lab">Days</span></div>
+    <div class="cbox"><span class="num" id="cd-h">00</span><span class="lab">Hours</span></div>
+    <div class="cbox"><span class="num" id="cd-m">00</span><span class="lab">Mins</span></div>
+    <div class="cbox"><span class="num" id="cd-s">00</span><span class="lab">Secs</span></div>
+  </div>
+  <button id="openBtn">Opening</button>
+</div>
+
+<!-- ============ MAIN CONTENT ============ -->
+<div id="main">
+
+  <section id="hero">
+    <p class="eyebrow">August 16</p>
+    <h1>Happy Birthday,<br><span class="name">Dev</span><span class="mini-heart">🤍</span> 🌙</h1>
+    <p class="tagline">Every year with you feels like its own little galaxy. Here's a small piece of ours — scroll down, wander through it slowly.</p>
+    <p class="scroll-cue">↓ scroll ↓</p>
+  </section>
+
+  <section id="together" style="text-align:center;">
+    <p class="eyebrow" style="letter-spacing:.3em;text-transform:uppercase;font-size:.7rem;color:var(--gold);margin-bottom:14px;">Since March 19, 2026</p>
+    <h2 style="margin-bottom:28px;">How long we've been us</h2>
+    <div class="count-row">
+      <div class="cbox"><span class="num" id="tg-d">0</span><span class="lab">Days</span></div>
+      <div class="cbox"><span class="num" id="tg-h">00</span><span class="lab">Hours</span></div>
+      <div class="cbox"><span class="num" id="tg-m">00</span><span class="lab">Mins</span></div>
+      <div class="cbox"><span class="num" id="tg-s">00</span><span class="lab">Secs</span></div>
+    </div>
+  </section>
+
+  <section id="story">
+    <div class="head">
+      <p class="eyebrow">Before Any Of This</p>
+      <h2>How it actually started</h2>
+      <p>March. A wedding. I was the bestman(Batman), you were my partner for the day — and I nearly missed you completely.</p>
+    </div>
+    <div class="story-line">
+      <div class="chapter" data-n="1">
+        <span class="ch-eyebrow">March · The Wedding</span>
+        <h3>The Girl I Ignored</h3>
+        <p>Before the wedding, you tried to talk to me first. I'll be honest — I barely gave you any attention. I was too busy being a distracted best man to notice what was standing right in front of me.</p>
+      </div>
+      <div class="chapter" data-n="2">
+        <span class="ch-eyebrow">Wedding Day</span>
+        <h3>The Dance</h3>
+        <p>Then the day came, and you talked to me like we'd known each other for years — easy, warm, a little flirty. After the photos, we danced. You held my hand and pulled me in. I can't dance — I still can't — but I tried anyway, just to keep dancing with you.</p>
+        <p>Then some guy pushed in to dance with you, and out of nowhere I felt jealous. Jealous, over a girl I'd met that day. So I talked myself out of it: <em>she's just friendly, she's like that with everyone, not just me.</em> I decided you weren't the one for me — someone that playful could easily get bored and move on. I was sure of it.</p>
+        <span class="quote">(I was, obviously, very wrong.)</span>
+      </div>
+      <div class="chapter" data-n="3">
+        <span class="ch-eyebrow">That Night</span>
+        <h3>Looking for You</h3>
+        <p>Before I left, I searched for you everywhere just to say goodbye. Couldn't find you. The next day I got sick and couldn't come to see you again — you sent me a photo of what you were planning to wear and asked if I'd come. I spent that whole day imagining you out there, laughing, dancing, talking to everyone else. Tried to forget about you. It didn't work.</p>
+      </div>
+      <div class="chapter" data-n="4">
+        <span class="ch-eyebrow">The Weeks After</span>
+        <h3>Closer, One Message at a Time</h3>
+        <p>We started messaging — day after day. Somewhere in there, all the distance I'd been trying to keep just quietly disappeared.</p>
+      </div>
+      <div class="chapter" data-n="5">
+        <span class="ch-eyebrow">Your Trip</span>
+        <h3>The Almost-Confession</h3>
+        <p>One day, while you were away on a trip, I told you I had a crush on you. You laughed it off — a nice joke, you said. I figured that was the end of it and tried to avoid you after. Turns out avoiding you was a lot harder than falling for you in the first place.</p>
+      </div>
+      <div class="chapter" data-n="6">
+        <span class="ch-eyebrow">Instagram, Late Nights</span>
+        <h3>"I Like You Too"</h3>
+        <p>Then you said it back. After that, our messages turned into something out of a dreamy movie — conversations that started in the evening and somehow lasted all night.</p>
+      </div>
+      <div class="chapter" data-n="7">
+        <span class="ch-eyebrow">A Bus Ride</span>
+        <h3>Where It Got Real</h3>
+        <p>I even started going to classes just to see you — to learn too, of course. But there's one bus ride I still remember exactly: you rested your head on my arm and looked up at me. That's the day this stopped being a crush and became something real.</p>
+      </div>
+      <div class="chapter" data-n="8">
+        <span class="ch-eyebrow">Since Then</span>
+        <h3>Still Us</h3>
+        <p>Laughing, arguing, making a mess of things, threatening to break up and never quite managing to — and somehow always finding our way back to each other. Still loving you. Still choosing you.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="constellation">
+    <div class="head">
+      <p class="eyebrow">Our Constellation</p>
+      <h2>And the dates that came after</h2>
+      <p>Once we were officially "us" — tap a star to open the memory.</p>
+    </div>
+    <div class="const-wrap">
+      <svg viewBox="0 0 600 400" aria-hidden="false" role="img">
+        <path class="const-line" d="M 110 300 L 300 130 L 490 260"></path>
+
+        <!-- Star 1: Galle Face -->
+        <g class="star-parallax" data-depth="14" transform="translate(110,300)">
+         <g class="drift drift-a">
+          <text class="star-date" x="0" y="-40" text-anchor="middle">05 APR</text>
+          <text class="star-label" x="0" y="-22" text-anchor="middle">Galle Face</text>
+          <foreignObject x="-16" y="-16" width="32" height="32">
+            <button class="star-btn" data-mem="galle" aria-label="Open Galle Face memory" xmlns="http://www.w3.org/1999/xhtml" style="width:32px;height:32px;">
+              <svg viewBox="0 0 24 24" width="32" height="32"><path d="M12 1l2.9 6.9L22 9l-5.5 5 1.5 7.5L12 18l-6 3.5L7.5 14 2 9l7.1-1.1L12 1z" fill="#f3c98b"/></svg>
+            </button>
+          </foreignObject>
+         </g>
+        </g>
+
+        <!-- Star 2: Museum -->
+        <g class="star-parallax" data-depth="24" transform="translate(300,130)">
+         <g class="drift drift-b">
+          <text class="star-date" x="0" y="-40" text-anchor="middle">MUSEUM DATE</text>
+          <text class="star-label" x="0" y="-22" text-anchor="middle">The Museum</text>
+          <foreignObject x="-16" y="-16" width="32" height="32">
+            <button class="star-btn" data-mem="museum" aria-label="Open Museum memory" xmlns="http://www.w3.org/1999/xhtml" style="width:32px;height:32px;">
+              <svg viewBox="0 0 24 24" width="32" height="32"><path d="M12 1l2.9 6.9L22 9l-5.5 5 1.5 7.5L12 18l-6 3.5L7.5 14 2 9l7.1-1.1L12 1z" fill="#eda9c4"/></svg>
+            </button>
+          </foreignObject>
+         </g>
+        </g>
+
+        <!-- Star 3: Planetarium -->
+        <g class="star-parallax" data-depth="19" transform="translate(490,260)">
+         <g class="drift drift-c">
+          <text class="star-date" x="0" y="-40" text-anchor="middle">PLANETARIUM DATE</text>
+          <text class="star-label" x="0" y="-22" text-anchor="middle">The Planetarium</text>
+          <foreignObject x="-16" y="-16" width="32" height="32">
+            <button class="star-btn" data-mem="planetarium" aria-label="Open Planetarium memory" xmlns="http://www.w3.org/1999/xhtml" style="width:32px;height:32px;">
+              <svg viewBox="0 0 24 24" width="32" height="32"><path d="M12 1l2.9 6.9L22 9l-5.5 5 1.5 7.5L12 18l-6 3.5L7.5 14 2 9l7.1-1.1L12 1z" fill="#f3c98b"/></svg>
+            </button>
+          </foreignObject>
+         </g>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <section id="letter">
+    <div class="head">
+      <p class="eyebrow">A Letter</p>
+      <h2>Something I wanted to say</h2>
+    </div>
+    <div class="letter-card">
+      <p id="letterText"></p>
+      <span class="signature">— Yasas</span>
+    </div>
+  </section>
+
+  <section id="gallery-section">
+    <div class="head">
+      <p class="eyebrow">Little Moments</p>
+      <h2>A few frames of us</h2>
+      <p>Memo</p>
+    </div>
+    <div class="gallery">
+      <div class="polaroid" style="--r:-4deg;">
+        <div class="frame" data-illo="beach" data-src="images/photo1.jpg">
+          <div class="illo" id="illo-1"></div>
+          <img src="images/photo-1.png" alt="Dev and Yasas photo 1" onerror="this.style.display='none'">
+        </div>
+        <p class="cap">Kaleniya</p>
+      </div>
+      <div class="polaroid" style="--r:3deg;">
+        <div class="frame" data-illo="museum" data-src="images/photo2.jpg">
+          <div class="illo" id="illo-2"></div>
+          <img src="images/photo-2.png" alt="Dev and Yasas photo 2" onerror="this.style.display='none'">
+        </div>
+        <p class="cap">Planetarium</p>
+      </div>
+      <div class="polaroid" style="--r:-2deg;">
+        <div class="frame" data-illo="stars" data-src="images/photo3.jpg">
+          <div class="illo" id="illo-3"></div>
+          <img src="images/photo-3.png" alt="Dev and Yasas photo 3" onerror="this.style.display='none'">
+        </div>
+        <p class="cap">Just us</p>
+      </div>
+      <div class="polaroid" style="--r:4deg;">
+        <div class="frame" data-illo="beach" data-src="images/photo4.jpg">
+          <div class="illo" id="illo-4"></div>
+          <img src="images/photo-4.png" alt="Dev and Yasas photo 4" onerror="this.style.display='none'">
+        </div>
+        <p class="cap">Under the projected stars</p>
+      </div>
+      <div class="polaroid" style="--r:2deg;">
+        <div class="frame" data-illo="wedding" data-src="images/photo5.jpg">
+          <div class="illo" id="illo-5"></div>
+          <img src="images/photo-5.png" alt="Dev and Yasas photo 5" onerror="this.style.display='none'">
+        </div>
+        <p class="cap">Kadawatha ride</p>
+      </div>
+      <div class="polaroid" style="--r:-3deg;">
+        <div class="frame" data-illo="bus" data-src="images/photo6.jpg">
+          <div class="illo" id="illo-6"></div>
+          <img src="images/photo-6.jpeg" alt="Dev and Yasas photo 6" onerror="this.style.display='none'">
+        </div>
+        <p class="cap">That Bus Ride</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="finale">
+    <p class="eyebrow" style="letter-spacing:.3em;text-transform:uppercase;font-size:.7rem;color:var(--gold);">Make a wish</p>
+    <h2>One more thing, Dev<span class="mini-heart">🤍</span></h2>
+    <p>Tap the star. Let it carry the wish for you.</p>
+    <button id="wishBtn">✦ Wish</button>
+    <p id="finaleMsg">Happy Birthday, my love. I'm so lucky it's you. 🤍</p>
+  </section>
+
+  <section id="message">
+    <div class="head">
+      <p class="eyebrow">Before You Go</p>
+      <h2>How do you feel?</h2>
+      <p>Do you have to say something? Type it below — it comes straight to me, nowhere else.</p>
+    </div>
+    <form id="feelForm" class="feel-form">
+      <textarea id="feelText" name="message" placeholder="Say whatever's on your mind..." required></textarea>
+      <button type="submit" id="feelSend">Send ✦</button>
+      <p id="feelStatus"></p>
+    </form>
+  </section>
+
+  <footer>made with love, for the girl who is my favourite constellation — Yasas</footer>
+</div>
+
+<div id="photoModal">
+  <div class="photo-modal-inner">
+    <button class="close" aria-label="Close photo">✕</button>
+    <img id="photoModalImg" alt="" style="display:none;">
+    <div id="photoModalIllo" class="illo-big" style="display:none;"></div>
+  </div>
+</div>
+
+<canvas id="burst"></canvas>
+
+<script>
+/* ================= COUNTDOWN ================= */
+const target = new Date('2026-08-16T00:00:00');
+const lock = document.getElementById('lock');
+const main = document.getElementById('main');
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function tick(allowAutoOpen){
+  const now = new Date();
+  const diff = target - now;
+  if(diff <= 0){
+    document.getElementById('cd-d').textContent = '00';
+    document.getElementById('cd-h').textContent = '00';
+    document.getElementById('cd-m').textContent = '00';
+    document.getElementById('cd-s').textContent = '00';
+    document.querySelector('#lock .sub').textContent = "It's here. Happy birthday, Dev.";
+    if(allowAutoOpen && !lock.classList.contains('hidden')) openSurprise();
+    return;
+  }
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor(diff%86400000/3600000);
+  const m = Math.floor(diff%3600000/60000);
+  const s = Math.floor(diff%60000/1000);
+  document.getElementById('cd-d').textContent = pad(d);
+  document.getElementById('cd-h').textContent = pad(h);
+  document.getElementById('cd-m').textContent = pad(m);
+  document.getElementById('cd-s').textContent = pad(s);
+}
+// first call only updates the numbers (rest of the script hasn't finished loading yet);
+// auto-open is only allowed from the interval-driven calls below, once everything is ready
+tick(false);
+setInterval(()=> tick(true), 1000);
+
+function openSurprise(){
+  lock.classList.add('hidden');
+  main.classList.add('reveal');
+  document.body.style.overflow = 'auto';
+  startLetter();
+}
+document.getElementById('openBtn').addEventListener('click', openSurprise);
+
+/* ================= LOVE LETTER TYPEWRITER ================= */
+const letterFull = `My Lv,
+
+Happy birthday. I still think about that wedding in March — how you tried to talk to me first, and I barely noticed. I think about being jealous over a girl I'd just met, and then spending days trying to convince myself you weren't special. I was wrong about that in every possible way.
+
+Galle Face, the museum, the planetarium, that one bus ride — I keep them all like little stars now. Today I just want to add one more to the sky: this one, the day you were born, the day all of it became possible.
+
+We've laughed, fought, threatened to walk away, and somehow always come back to each other anyway. I wouldn't trade a single messy, dreamy, ridiculous bit of it.
+
+I love you more than I know how to write in a straight line. Here's to another year of falling for you all over again.
+
+Yours, always,`;
+
+let letterStarted = false;
+function startLetter(){
+  if(letterStarted) return;
+  letterStarted = true;
+  const el = document.getElementById('letterText');
+  let i = 0;
+  el.innerHTML = '<span class="caret">&nbsp;</span>';
+  function type(){
+    if(i <= letterFull.length){
+      el.innerHTML = letterFull.slice(0,i) + '<span class="caret">&nbsp;</span>';
+      i++;
+      setTimeout(type, 18);
+    }
+  }
+  type();
+}
+
+/* ================= STORY CHAPTER REVEAL ================= */
+const chapterObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting) entry.target.classList.add('in');
+  });
+}, { threshold: 0.25 });
+document.querySelectorAll('.chapter').forEach(ch => chapterObserver.observe(ch));
+
+/* ================= CONSTELLATION PARALLAX ================= */
+const constWrap = document.querySelector('.const-wrap');
+const parallaxStars = document.querySelectorAll('.star-parallax');
+const starBase = new Map();
+parallaxStars.forEach(g=>{
+  const t = g.getAttribute('transform');
+  const m = t.match(/translate\(([-\d.]+),\s*([-\d.]+)\)/);
+  starBase.set(g, { x: parseFloat(m[1]), y: parseFloat(m[2]), depth: parseFloat(g.dataset.depth) });
+});
+
+function applyParallax(nx, ny){
+  parallaxStars.forEach(g=>{
+    const b = starBase.get(g);
+    const dx = nx * b.depth;
+    const dy = ny * b.depth;
+    g.setAttribute('transform', `translate(${b.x + dx}, ${b.y + dy})`);
+  });
+}
+
+if(constWrap){
+  constWrap.addEventListener('mousemove', (e)=>{
+    const rect = constWrap.getBoundingClientRect();
+    const nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    applyParallax(nx, ny);
+  });
+  constWrap.addEventListener('mouseleave', ()=> applyParallax(0,0));
+
+  // gentle gyroscope-based drift on mobile, if available
+  if(window.DeviceOrientationEvent){
+    window.addEventListener('deviceorientation', (e)=>{
+      if(e.gamma === null || e.beta === null) return;
+      const nx = Math.max(-1, Math.min(1, e.gamma / 30));
+      const ny = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
+      applyParallax(nx, ny);
+    });
+  }
+}
+
+/* ================= TOGETHER SINCE COUNTER ================= */
+const togetherStart = new Date('2026-03-19T00:00:00');
+function tickTogether(){
+  const now = new Date();
+  let diff = now - togetherStart;
+  if(diff < 0) diff = 0;
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor(diff%86400000/3600000);
+  const m = Math.floor(diff%3600000/60000);
+  const s = Math.floor(diff%60000/1000);
+  document.getElementById('tg-d').textContent = d;
+  document.getElementById('tg-h').textContent = pad(h);
+  document.getElementById('tg-m').textContent = pad(m);
+  document.getElementById('tg-s').textContent = pad(s);
+}
+tickTogether();
+setInterval(tickTogether, 1000);
+
+/* ================= MEMORY MODAL ================= */
+const memories = {
+  galle: {
+    date: '05 April · First Date',
+    title: 'Galle Face',
+    text: "The Day the ocean decided to introduce us properly. Salt air,  and a conversation neither of us wanted to end. I remember walking you back and already wanting to see you again the next day.",
+    illo: 'beach'
+  },
+  museum: {
+    date: 'The Museum Date',
+    title: 'Wandering the Museum',
+    text: "Laughing to stupid jokes, and remember? other oldest mirror selfie that we took",
+    illo: 'museum'
+  },
+  planetarium: {
+    date: 'The Planetarium Date',
+    title: 'Under Projected Stars',
+    text: "Sitting in the dark, necks tilted back, watching a sky that wasn't even real — and it still felt like the most romantic ceiling I'd ever seen, because you were next to me.",
+    illo: 'stars'
+  }
+};
+
+const illos = {
+  beach: `<svg viewBox="0 0 300 225" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect width="300" height="225" fill="#1d2350"/><rect y="150" width="300" height="75" fill="#0f1333"/><circle cx="230" cy="70" r="26" fill="#f3c98b"/><path d="M0 150 Q 75 130 150 150 T 300 150 V225 H0 Z" fill="#151a3d"/></svg>`,
+  museum: `<svg viewBox="0 0 300 225" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect width="300" height="225" fill="#1d2350"/><rect x="30" y="40" width="70" height="90" fill="none" stroke="#f3c98b" stroke-width="3"/><rect x="120" y="60" width="70" height="70" fill="none" stroke="#eda9c4" stroke-width="3"/><rect x="210" y="30" width="60" height="100" fill="none" stroke="#f3c98b" stroke-width="3"/><rect y="150" width="300" height="75" fill="#0f1333"/></svg>`,
+  stars: `<svg viewBox="0 0 300 225" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect width="300" height="225" fill="#0b0f2b"/><circle cx="40" cy="40" r="2" fill="#f3c98b"/><circle cx="90" cy="80" r="1.5" fill="#fff"/><circle cx="160" cy="30" r="2" fill="#f3c98b"/><circle cx="220" cy="60" r="1.5" fill="#fff"/><circle cx="260" cy="100" r="2" fill="#eda9c4"/><circle cx="120" cy="120" r="1.5" fill="#fff"/><circle cx="60" cy="150" r="2" fill="#f3c98b"/><path d="M0 200 A150 150 0 0 1 300 200" fill="none" stroke="#f3c98b" stroke-width="2"/></svg>`,
+  wedding: `<svg viewBox="0 0 300 225" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect width="300" height="225" fill="#1d2350"/><circle cx="150" cy="90" r="34" fill="none" stroke="#f3c98b" stroke-width="3"/><circle cx="150" cy="90" r="22" fill="none" stroke="#eda9c4" stroke-width="2"/><rect y="150" width="300" height="75" fill="#0f1333"/><circle cx="60" cy="40" r="2" fill="#fff"/><circle cx="240" cy="50" r="2" fill="#f3c98b"/></svg>`,
+  bus: `<svg viewBox="0 0 300 225" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect width="300" height="225" fill="#151a3d"/><rect x="40" y="70" width="220" height="90" rx="10" fill="#1d2350" stroke="#f3c98b" stroke-width="2"/><rect x="60" y="90" width="50" height="35" fill="#0b0f2b"/><rect x="130" y="90" width="50" height="35" fill="#0b0f2b"/><rect x="200" y="90" width="40" height="35" fill="#0b0f2b"/><circle cx="90" cy="165" r="12" fill="#0b0f2b"/><circle cx="220" cy="165" r="12" fill="#0b0f2b"/></svg>`
+};
+
+const modal = document.getElementById('memModal') || createModal();
+function createModal(){
+  const m = document.createElement('div');
+  m.id = 'memModal';
+  m.innerHTML = `<div class="mem-card">
+      <button class="close" aria-label="Close">✕</button>
+      <div class="photo-frame"><div class="illo" id="modalIllo"></div><img id="modalImg" alt=""></div>
+      <span class="date-chip" id="modalDate"></span>
+      <h3 id="modalTitle"></h3>
+      <p id="modalText"></p>
+    </div>`;
+  document.body.appendChild(m);
+  m.querySelector('.close').addEventListener('click', ()=> m.classList.remove('open'));
+  m.addEventListener('click', (e)=>{ if(e.target === m) m.classList.remove('open'); });
+  return m;
+}
+
+document.querySelectorAll('.star-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key = btn.dataset.mem;
+    const mem = memories[key];
+    document.getElementById('modalDate').textContent = mem.date;
+    document.getElementById('modalTitle').textContent = mem.title;
+    document.getElementById('modalText').textContent = mem.text;
+    document.getElementById('modalIllo').innerHTML = illos[mem.illo];
+    const img = document.getElementById('modalImg');
+    img.style.display = 'block';
+    img.src = 'images/' + key + '.jpg';
+    img.onerror = ()=>{ img.style.display = 'none'; };
+    modal.classList.add('open');
+  });
+});
+
+document.getElementById('illo-1').innerHTML = illos.beach;
+document.getElementById('illo-2').innerHTML = illos.museum;
+document.getElementById('illo-3').innerHTML = illos.stars;
+document.getElementById('illo-4').innerHTML = illos.beach;
+document.getElementById('illo-5').innerHTML = illos.wedding;
+document.getElementById('illo-6').innerHTML = illos.bus;
+
+/* ================= PHOTO LIGHTBOX ================= */
+const photoModal = document.getElementById('photoModal');
+const photoModalImg = document.getElementById('photoModalImg');
+const photoModalIllo = document.getElementById('photoModalIllo');
+
+document.querySelectorAll('.polaroid .frame').forEach(frame=>{
+  frame.addEventListener('click', ()=>{
+    const img = frame.querySelector('img');
+    const illoKey = frame.dataset.illo;
+    const hasPhoto = img && img.style.display !== 'none' && img.complete && img.naturalWidth > 0;
+    if(hasPhoto){
+      photoModalImg.src = img.src;
+      photoModalImg.style.display = 'block';
+      photoModalIllo.style.display = 'none';
+    } else {
+      photoModalIllo.innerHTML = illos[illoKey] || '';
+      photoModalIllo.style.display = 'block';
+      photoModalImg.style.display = 'none';
+    }
+    photoModal.classList.add('open');
+  });
+});
+photoModal.querySelector('.close').addEventListener('click', ()=> photoModal.classList.remove('open'));
+photoModal.addEventListener('click', (e)=>{ if(e.target === photoModal) photoModal.classList.remove('open'); });
+
+/* ================= FEELINGS MESSAGE FORM ================= */
+const feelForm = document.getElementById('feelForm');
+const feelStatus = document.getElementById('feelStatus');
+const feelSend = document.getElementById('feelSend');
+
+feelForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const text = document.getElementById('feelText').value.trim();
+  if(!text) return;
+  feelSend.disabled = true;
+  feelStatus.textContent = 'Sending...';
+  feelStatus.classList.remove('ok');
+  try{
+    const res = await fetch('https://formsubmit.co/ajax/nethrayasas026@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'A message from Dev 💌',
+        message: text
+      })
+    });
+    if(res.ok){
+      feelStatus.textContent = 'Sent 🤍 — thank you for saying that.';
+      feelStatus.classList.add('ok');
+      feelForm.reset();
+    } else {
+      throw new Error('failed');
+    }
+  } catch(err){
+    feelStatus.textContent = "Couldn't send it — try again in a moment.";
+  } finally {
+    feelSend.disabled = false;
+  }
+});
+
+/* ================= WISH BUTTON + BURST ================= */
+const wishBtn = document.getElementById('wishBtn');
+const finaleMsg = document.getElementById('finaleMsg');
+const canvas = document.getElementById('burst');
+const ctx = canvas.getContext('2d');
+function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+let particles = [];
+function burst(x,y){
+  for(let i=0;i<60;i++){
+    const angle = Math.random()*Math.PI*2;
+    const speed = 2 + Math.random()*4;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle)*speed,
+      vy: Math.sin(angle)*speed,
+      life: 60 + Math.random()*30,
+      color: Math.random() > 0.5 ? '#f3c98b' : '#eda9c4',
+      size: 2 + Math.random()*3,
+      shape: Math.random() > 0.6 ? 'heart' : 'dot'
+    });
+  }
+}
+function drawHeart(x,y,size,color){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.scale(size/10,size/10);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(0,3);
+  ctx.bezierCurveTo(0,-2,-6,-2,-6,2);
+  ctx.bezierCurveTo(-6,6,0,9,0,12);
+  ctx.bezierCurveTo(0,9,6,6,6,2);
+  ctx.bezierCurveTo(6,-2,0,-2,0,3);
+  ctx.fill();
+  ctx.restore();
+}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    p.x += p.vx; p.y += p.vy; p.vy += 0.03; p.life -= 1;
+    ctx.globalAlpha = Math.max(p.life/90,0);
+    if(p.shape === 'heart') drawHeart(p.x,p.y,p.size*2,p.color);
+    else { ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill(); }
+  });
+  ctx.globalAlpha = 1;
+  particles = particles.filter(p=>p.life>0);
+  requestAnimationFrame(animate);
+}
+animate();
+
+wishBtn.addEventListener('click', ()=>{
+  const rect = wishBtn.getBoundingClientRect();
+  burst(rect.left+rect.width/2, rect.top+rect.height/2);
+  finaleMsg.classList.add('show');
+});
+</script>
+</body>
+</html>
